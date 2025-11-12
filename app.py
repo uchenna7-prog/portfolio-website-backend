@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app,resources={r"/*":{"origins":"https://uchendu-uchenna-portfolio.vercel.app"}})
 
 
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
