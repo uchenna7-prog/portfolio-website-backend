@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 from flask_mail import Mail, Message
 from flask_cors import CORS
@@ -8,8 +7,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app,resources={r"/*":{"origins":"https://uchendu-uchenna-portfolio.vercel.app"}},allow_headers=["Content-Type","Authorization"],methods=["GET","POST","OPTIONS"])
 
+# FIXED CORS Configuration
+CORS(app, 
+     resources={r"/*": {"origins": "https://uchendu-uchenna-portfolio.vercel.app"}},
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET", "POST", "OPTIONS"],
+     supports_credentials=True)
 
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
@@ -26,8 +30,12 @@ def home():
     return jsonify({"status": "Backend is running!", "message": "server is active"}), 200
 
 
-@app.route("/send", methods=["POST"])
+@app.route("/send", methods=["POST", "OPTIONS"])  # Added OPTIONS
 def send():
+    # Handle preflight request
+    if request.method == "OPTIONS":
+        return jsonify({"success": True}), 200
+    
     try:
         data = request.get_json()
         if not data:
@@ -40,13 +48,11 @@ def send():
         if not all([name, email, user_message]):
             return jsonify({"success": False, "message": "Missing required fields"}), 400
 
-
         email_message = Message(
             subject=f"New contact from {name}",
             recipients=[os.getenv("MAIL_USERNAME")],
             body=f"Name: {name}\nEmail: {email}\nMessage: {user_message}"
         )
-
 
         mail.send(email_message)
         return jsonify({"success": True, "message": "Email sent successfully!"}), 200
@@ -55,4 +61,4 @@ def send():
         return jsonify({"success": False, "message": f"Server error: {str(e)}"}), 500
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
