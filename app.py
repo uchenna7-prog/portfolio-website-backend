@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app,resources={r"/*":{"origins":"https://uchendu-uchenna-portfolio.vercel.app/"}},allow_headers=["Content-Type","Authorization"],methods=["GET","POST","OPTIONS"])
+CORS(app,resources={r"/*":{"origins":"https://uchendu-uchenna-portfolio.vercel.app"}},allow_headers=["Content-Type","Authorization"],methods=["GET","POST","OPTIONS"])
 
 
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
@@ -55,4 +55,4 @@ def send():
         return jsonify({"success": False, "message": f"Server error: {str(e)}"}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
