@@ -7,10 +7,6 @@ import logging
 
 load_dotenv()
 
-# Add logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
 app = Flask(__name__)
 CORS(app)
 
@@ -20,10 +16,6 @@ app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
-
-# Log config (without exposing password)
-logger.info(f"Mail config - Username: {app.config['MAIL_USERNAME']}")
-logger.info(f"Mail config - Has password: {bool(app.config['MAIL_PASSWORD'])}")
 
 mail = Mail(app)
 
@@ -51,8 +43,6 @@ def send():
 
         if not all([name, email, user_message]):
             return jsonify({"success": False, "message": "Missing required fields"}), 400
-
-        logger.info(f"Attempting to send email from {name}")
         
         email_message = Message(
             subject=f"New contact from {name}",
@@ -61,13 +51,10 @@ def send():
         )
 
         mail.send(email_message)
-        logger.info("Email sent successfully")
         return jsonify({"success": True, "message": "Email sent successfully!"}), 200
 
     except Exception as e:
-        logger.error(f"Error sending email: {str(e)}", exc_info=True)
         return jsonify({"success": False, "message": f"Server error: {str(e)}"}), 500
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(debug=False)
