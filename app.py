@@ -3,7 +3,6 @@ from flask_mail import Mail, Message
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
-import logging
 
 load_dotenv()
 
