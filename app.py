@@ -31,7 +31,6 @@ def send():
     
     try:
         data = request.get_json()
-        logger.info(f"Received data: {data}")
         
         if not data:
             return jsonify({"success": False, "message": "No data received"}), 400
