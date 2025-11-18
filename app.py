@@ -32,7 +32,11 @@ def home():
 @app.route("/send", methods=["POST", "OPTIONS"])
 def send():
     if request.method == "OPTIONS":
-        return jsonify({"success": True}), 200
+    response = jsonify({"success": True})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    return response, 200
     
     try:
         data = request.get_json()
